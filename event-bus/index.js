@@ -6,6 +6,8 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+const events = [];
+
 app.post("/events", (req, res) => {
   const event = req.body;
 
@@ -18,7 +20,7 @@ app.post("/events", (req, res) => {
       console.log(err.message);
     });
   axios
-    .post("http://localhost:5000/events", event)
+    .post("http://localhost:4001/events", event)
     .then((res) => {
       console.log("EventBus Received New Comment");
     })
@@ -26,9 +28,17 @@ app.post("/events", (req, res) => {
       console.log(err.message);
     });
   axios
-    .post("http://localhost:7000/events", event)
+    .post("http://localhost:4002/events", event)
     .then((res) => {
       console.log("EventBus Received New PostCommentQuery");
+    })
+    .catch((err) => {
+      console.log(err.message);
+    });
+  axios
+    .post("http://localhost:4003/events", event)
+    .then((res) => {
+      console.log("Moderation Received");
     })
     .catch((err) => {
       console.log(err.message);
@@ -37,6 +47,10 @@ app.post("/events", (req, res) => {
   res.send({ status: "OK" });
 });
 
-app.listen(5500, () => {
-  console.log("Listening On 5500");
+app.get("/events", (req, res) => {
+  res.send(events);
+});
+
+app.listen(4005, () => {
+  console.log("Listening On 4005");
 });

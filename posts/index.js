@@ -12,11 +12,7 @@ app.use(cors());
 const posts = {};
 
 app.get("/posts", (req, res) => {
-  try {
-    res.send(posts);
-  } catch (e) {
-    console.log(e.message);
-  }
+  res.send(posts);
 });
 
 app.post("/posts", async (req, res) => {
@@ -28,30 +24,23 @@ app.post("/posts", async (req, res) => {
     title,
   };
 
-  await axios
-    .post("http://localhost:5500/events", {
-      type: "PostCreated",
-      data: {
-        id,
-        title,
-      },
-    })
-    .then((res) => {
-      console.log("Post Event Created");
-    })
-    .catch((err) => {
-      console.log(err.message);
-    });
+  await axios.post("http://localhost:4005/events", {
+    type: "PostCreated",
+    data: {
+      id,
+      title,
+    },
+  });
 
   res.status(201).send(posts[id]);
 });
 
 app.post("/events", (req, res) => {
-  console.log("Post Recieved Event", req.body.type);
+  console.log("Received Event", req.body.type);
 
   res.send({});
 });
 
 app.listen(4000, () => {
-  console.log("Listening On 4000");
+  console.log("Listening on 4000");
 });
